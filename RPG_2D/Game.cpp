@@ -1,9 +1,26 @@
 #include "Game.h"
 
 void Game::initWindow() {
-	this->videoMode = sf::VideoMode::getDesktopMode();
-	this->window = new sf::RenderWindow(videoMode, "RPG Open", sf::Style::Fullscreen);
-	this->window->setFramerateLimit(75);
+
+	std::ifstream inFileStream("Config/window.ini");
+	std::string title = "None";
+	sf::VideoMode windowBounds(1280, 720);
+	unsigned frameRateLimit = 75;
+	bool verticalSyncEnabled = false;
+
+	if (inFileStream.is_open()) {
+		std::getline(inFileStream, title);
+		inFileStream >> windowBounds.width >> windowBounds.height;
+		inFileStream >> frameRateLimit;
+		inFileStream >> verticalSyncEnabled;
+	}
+
+	inFileStream.close();
+
+
+	this->window = new sf::RenderWindow(windowBounds, title); /*sf::Style::Fullscreen*/
+	this->window->setFramerateLimit(frameRateLimit);
+	this->window->setVerticalSyncEnabled(verticalSyncEnabled);
 }
 
 Game::Game() {
@@ -25,8 +42,8 @@ void Game::updateDt() {
 	* updates the dt variable with the time it takes to update and render one frame.
 	*/
 	this->dt = this->dtClock.restart().asSeconds();
-	system("cls");
-	std::cout << this->dt << std::endl;
+	//system("cls");
+	//std::cout << this->dt << std::endl;
 }
 
 // Functions

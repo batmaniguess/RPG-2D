@@ -3,6 +3,8 @@
 #include <ctime>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <fstream>
+#include <sstream>
 
 class State {
 private:
