@@ -23,16 +23,22 @@ void Game::initWindow() {
 	this->window->setVerticalSyncEnabled(verticalSyncEnabled);
 }
 
+void Game::initStates() {
+	this->states.push(new GameState(this->window));
+}
+
 Game::Game() {
 	this->initWindow();
-	this->updateEvents();
-	this->update();
-	this->render();
-	this->run();
+	this->initStates();
 }
 
 Game::~Game() {
 	delete this->window;
+
+	while (!this->states.empty()) {
+		delete this->states.top(); // erases the data
+		this->states.pop(); // removes the pointer
+	}
 }
 
 
@@ -65,14 +71,16 @@ void Game::updateEvents() {
 
 void Game::update() {
 	this->updateEvents();
-	//int sum = 0;
-	//for (int i = 0; i < 100000000; i++) {
-	//	sum += i;
-	//}
+	if (!this->states.empty()) {
+		this->states.top()->update(this->dt);
+	}
 }
 
 void Game::render() {
 	this->window->clear();
+	if (!this->states.empty()) {
+		this->states.top()->render();
+	}
 	this->window->display();
 }
 

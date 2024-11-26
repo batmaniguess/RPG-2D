@@ -1,22 +1,21 @@
 #pragma once
 
-#include "State.h"
+#include "States/GameState.h"
 
 class Game {
 private:
 	// Variables
-	sf::VideoMode videoMode;
 	sf::RenderWindow *window;
 	sf::Event event;
 
 	sf::Clock dtClock;
 	float dt;
 
+	std::stack<State*> states;
 
-	
 	// Initialization
-
 	void initWindow();
+	void initStates();
 
 
 public:
