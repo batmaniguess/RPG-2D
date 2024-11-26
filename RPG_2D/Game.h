@@ -1,8 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <ctime>
-#include <iostream>
+#include "State.h"
 
 class Game {
 private:
@@ -10,6 +8,10 @@ private:
 	sf::VideoMode videoMode;
 	sf::RenderWindow *window;
 	sf::Event event;
+
+	sf::Clock dtClock;
+	float dt;
+
 
 	
 	// Initialization
@@ -21,6 +23,7 @@ public:
 	Game();
 	virtual ~Game();
 
+	void updateDt();
 	void updateEvents();
 	void update();
 	void render();
