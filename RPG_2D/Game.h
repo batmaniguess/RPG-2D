@@ -3,29 +3,28 @@
 #include "States/GameState.h"
 
 class Game {
-private:
-	// Variables
-	sf::RenderWindow *window;
-	sf::Event event;
+ private:
+  // Variables
+  sf::RenderWindow *window;
+  sf::Event event;
 
-	sf::Clock dtClock;
-	float dt;
+  sf::Clock dtClock;
+  float dt;
 
-	std::stack<State*> states;
+  std::stack<State *> states;
 
-	// Initialization
-	void initWindow();
-	void initStates();
+  // Initialization
+  void initWindow();
+  void initStates();
 
+ public:
+  Game();
+  virtual ~Game();
 
-public:
-	Game();
-	virtual ~Game();
-
-	void updateDt();
-	void updateEvents();
-	void update();
-	void render();
-	void run();
+  void endApplication();
+  void updateDt();
+  void updateEvents();
+  void update();
+  void render();
+  void run();
 };
-
