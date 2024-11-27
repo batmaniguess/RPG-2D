@@ -13,6 +13,7 @@ class Game {
 
   std::stack<State *> states;
 
+
   // Initialization
   void initWindow();
   void initStates();
