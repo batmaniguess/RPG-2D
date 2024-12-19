@@ -1,5 +1,11 @@
 #include "MainMenuState.h"
 
+void MainMenuState::initFonts() {
+  if (!this->font.loadFromFile("Fonts/Geo-Regular.ttf")) {
+    throw("Could not load font ERROR::MAINMENUSTATE");
+  }
+}
+
 void MainMenuState::initKeyBinds() {
   std::ifstream ifs("Config/gamestate_keys.ini");
   if (ifs.is_open()) {
@@ -15,6 +21,7 @@ void MainMenuState::initKeyBinds() {
 MainMenuState::MainMenuState(sf::RenderWindow* window,
                              std::map<std::string, int>* supportedKeys)
     : State(window, supportedKeys) {
+  this->initFonts();
   this->initKeyBinds();
   this->background.setSize(
       sf::Vector2f(window->getSize().x, window->getSize().y));
@@ -33,7 +40,12 @@ void MainMenuState::updateInput(const float& dt) {
     this->background.setFillColor(sf::Color::Black);
 }
 
-void MainMenuState::update(const float& dt) { this->updateInput(dt); }
+void MainMenuState::update(const float& dt) {
+  this->updateMousePositions();
+  this->updateInput(dt);
+  // std::cout << this->mousePosView.x << " " << this->mousePosView.y <<
+  // std::endl;
+}
 
 void MainMenuState::render(sf::RenderTarget* target) {
   if (!target) target = this->window;

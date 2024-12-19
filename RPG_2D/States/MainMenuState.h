@@ -1,10 +1,14 @@
 #pragma once
 
+#include "../Button.h"
 #include "GameState.h"
+
 class MainMenuState : public State {
  private:
   sf::RectangleShape background;
+  sf::Font font;
 
+  void initFonts();
   void initKeyBinds();
 
  public:
