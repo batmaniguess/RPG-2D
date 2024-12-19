@@ -1,30 +1,53 @@
 #include "Game.h"
 
 void Game::initWindow() {
-  std::ifstream inFileStream("Config/window.ini");
-  std::string title = "None";
   sf::VideoMode windowBounds(1280, 720);
+  std::string title = "SFML 2D";
   unsigned frameRateLimit = 75;
   bool verticalSyncEnabled = false;
 
-  if (inFileStream.is_open()) {
-    std::getline(inFileStream, title);
-    inFileStream >> windowBounds.width >> windowBounds.height;
-    inFileStream >> frameRateLimit;
-    inFileStream >> verticalSyncEnabled;
+  try {
+    std::ifstream inFileStream("Config/window.ini");
+    if (inFileStream.is_open()) {
+      std::getline(inFileStream, title);
+      inFileStream >> windowBounds.width >> windowBounds.height;
+      if (windowBounds.width < 100 || windowBounds.height < 100)
+        throw std::runtime_error("Invalid window bounds");
+      inFileStream >> frameRateLimit;
+      inFileStream >> verticalSyncEnabled;
+      inFileStream.close();
+    }
+  } catch (const std::exception& e) {
+    std::cerr << "Failed to load window.ini file: " << e.what() << std::endl;
+    std::cerr << "Using default values" << std::endl;
   }
 
-  inFileStream.close();
-  this->window =
-      new sf::RenderWindow(windowBounds, title); /*sf::Style::Fullscreen*/
-  this->window->setFramerateLimit(frameRateLimit);
-  this->window->setVerticalSyncEnabled(verticalSyncEnabled);
+  try {
+    this->window =
+        new sf::RenderWindow(windowBounds, title); /*sf::Style::Fullscreen*/
+    this->window->setFramerateLimit(frameRateLimit);
+    this->window->setVerticalSyncEnabled(verticalSyncEnabled);
+  } catch (const std::exception& e) {
+    std::cerr << "Failed to create window." << e.what() << std::endl;
+    throw;
+  }
 }
 
-void Game::initStates() { this->states.push(new GameState(this->window)); }
+void Game::initKeys() {
+  this->supportedKeys.emplace("Escape", sf::Keyboard::Key::Escape);
+  this->supportedKeys.emplace("A", sf::Keyboard::Key::A);
+  this->supportedKeys.emplace("D", sf::Keyboard::Key::D);
+  this->supportedKeys.emplace("W", sf::Keyboard::Key::W);
+  this->supportedKeys.emplace("S", sf::Keyboard::Key::S);
+}
+
+void Game::initStates() {
+  this->states.push(new GameState(this->window, &this->supportedKeys));
+}
 
 Game::Game() {
   this->initWindow();
+  this->initKeys();
   this->initStates();
 }
 
@@ -67,10 +90,12 @@ void Game::updateEvents() {
 void Game::update() {
   this->updateEvents();
   if (!this->states.empty()) {
-    this->states.top()->update(this->dt);
-    if (this->states.top()->getQuit()) {
-      this->states.top()->endState();
-      delete this->states.top();
+    State* currentState = this->states.top();
+    currentState->update(this->dt);
+
+    if (currentState->getQuit()) {
+      currentState->endState();
+      delete currentState;
       this->states.pop();
     }
   } else {

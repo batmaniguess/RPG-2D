@@ -3,13 +3,16 @@
 class GameState : public State {
  private:
   Entity player;
+
+  void initKeyBinds();
+
  public:
-  GameState(sf::RenderWindow* window);
+  GameState(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys);
   virtual ~GameState();
 
   // Functions
   void endState();
-  void updateKeyBinds(const float& dt);
+  void updateInput(const float& dt);
   void update(const float& dt);
   void render(sf::RenderTarget* target = NULL);
 };
