@@ -7,7 +7,7 @@ void GameState::initKeyBinds() {
   this->keybinds.emplace("MOVE_DOWN", this->supportedKeys->at("S"));
 }
 
-GameState::GameState(sf::RenderWindow* windowm,
+GameState::GameState(sf::RenderWindow* window,
                      std::map<std::string, int>* supportedKeys)
     : State(window, supportedKeys) {
   this->initKeyBinds();
@@ -18,19 +18,25 @@ GameState::~GameState() {}
 void GameState::endState() { std::cout << "Ending GameState" << std::endl; }
 
 void GameState::updateInput(const float& dt) {
-  this->checkForQuit();
-  if (sf::Keyboard::isKeyPressed(
-          sf::Keyboard::Key(this->keybinds.at("MOVE_LEFT"))))
-    this->player.move(dt, -1.f, 0.f);
-  if (sf::Keyboard::isKeyPressed(
-          sf::Keyboard::Key(this->keybinds.at("MOVE_RIGHT"))))
-    this->player.move(dt, 1.f, 0.f);
-  if (sf::Keyboard::isKeyPressed(
-          sf::Keyboard::Key(this->keybinds.at("MOVE_UP"))))
-    this->player.move(dt, 0.f, -1.f);
-  if (sf::Keyboard::isKeyPressed(
-          sf::Keyboard::Key(this->keybinds.at("MOVE_DOWN"))))
-    this->player.move(dt, 0.f, 1.f);
+  // safe key checking
+  auto checkAndMove = [this](const std::string& binding, float x, float y,
+                             const float& dt) {
+    try {
+      if (this->keybinds.count(binding) &&
+          sf::Keyboard::isKeyPressed(
+              sf::Keyboard::Key(this->keybinds.at(binding)))) {
+        this->player.move(dt, x, y);
+      }
+    } catch (const std::exception& e) {
+      std::cerr << "Error parsing input for " << binding << e.what()
+                << std::endl;
+    }
+  };
+
+  checkAndMove("MOVE_LEFT", -1.f, 0.f, dt);
+  checkAndMove("MOVE_RIGHT", 1.f, 0.f, dt);
+  checkAndMove("MOVE_UP", 0.f, -1.f, dt);
+  checkAndMove("MOVE_DOWN", 0.f, 1.f, dt);
 }
 
 void GameState::update(const float& dt) {
@@ -41,6 +47,6 @@ void GameState::update(const float& dt) {
 void GameState::render(sf::RenderTarget* target) {
   if (!target) {
     target = this->window;
-    this->player.render(target);
   }
+  this->player.render(target);
 }

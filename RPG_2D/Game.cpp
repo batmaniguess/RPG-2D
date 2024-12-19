@@ -106,8 +106,8 @@ void Game::update() {
 
 void Game::render() {
   this->window->clear();
-  if (!this->states.empty()) {
-    this->states.top()->render();
+  if (!this->states.empty() && this->window) {
+    this->states.top()->render(this->window);
   }
   this->window->display();
 }

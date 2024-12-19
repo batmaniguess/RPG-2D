@@ -1,6 +1,7 @@
 #include "State.h"
 
-State::State(sf::RenderWindow* window, std::map<std::string, int>* supportedKeys) {
+State::State(sf::RenderWindow* window,
+             std::map<std::string, int>* supportedKeys) {
   this->window = window;
   this->supportedKeys = supportedKeys;
   this->quit = false;
@@ -14,4 +15,14 @@ void State::checkForQuit() {
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
     this->quit = true;
   }
+}
+
+bool State::loadTexture(const std::string& path) {
+  sf::Texture texture;
+  if (!texture.loadFromFile(path)) {
+    std::cerr << "Failed to load texture: " << path << std::endl;
+    return false;
+  }
+  textures.push_back(texture);
+  return true;
 }
