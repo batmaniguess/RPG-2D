@@ -1,10 +1,15 @@
 #include "GameState.h"
 
 void GameState::initKeyBinds() {
-  this->keybinds.emplace("MOVE_LEFT", this->supportedKeys->at("A"));
-  this->keybinds.emplace("MOVE_RIGHT", this->supportedKeys->at("D"));
-  this->keybinds.emplace("MOVE_UP", this->supportedKeys->at("W"));
-  this->keybinds.emplace("MOVE_DOWN", this->supportedKeys->at("S"));
+  std::ifstream ifs("Config/gamestate_keys.ini");
+  if (ifs.is_open()) {
+    std::string key1 = "";
+    std::string key2 = "";
+    while (ifs >> key1 >> key2) {
+      this->keybinds[key1] = this->supportedKeys->at(key2);
+    }
+  }
+  ifs.close();
 }
 
 GameState::GameState(sf::RenderWindow* window,
